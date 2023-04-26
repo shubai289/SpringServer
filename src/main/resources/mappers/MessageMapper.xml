@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wclp.springserver.mapper.MessageMapper">
+
+    <select id="getMessageList" resultType="DeviceMsg">
+        select *
+        from message
+        ORDER BY createtime Desc
+    </select>
+
+    <select id="getMsgHtyList" resultType="DeviceMsg">
+        select *
+        from msg_history
+        where checked = 1
+        ORDER BY createtime Desc
+    </select>
+
+    <select id="getDeletedMsgPage" resultType="DeviceMsg">
+        select *
+        from msg_history
+        where checked = 2
+        ORDER BY createtime Desc
+    </select>
+
+    <select id="getMessage" resultType="DeviceMsg">
+        select *
+        from message
+        where productKey=#{Key}
+    </select>
+
+    <update id="HideMessage" parameterType="int">
+        update msg_history
+        <set>
+            <if test="checked != null">checked=#{checked},</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <update id="RecoverMsgHty" parameterType="int">
+        update msg_history
+        <set>
+            <if test="checked != null">checked=#{checked},</if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <select id="getMessagebyId" parameterType="int" resultType="DeviceMsg">
+        select *
+        from message
+        where id=#{id}
+    </select>
+
+    <update id="updateMessage" parameterType="DeviceMsg">
+        update message
+        <set>
+            <if test="deviceName != null" >deviceName=#{deviceName},</if>
+            <if test="productKey != null" >productKey=#{productKey},</if>
+            <if test="checked != null" >checked=#{checked},</if>
+            <if test="createtime != null" >createtime=#{createtime},</if>
+        </set>
+        where message=#{message}
+    </update>
+
+    <insert id="NewMessage" parameterType="DeviceMsg">
+        insert into spring_server.message
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="deviceName != null" >
+                deviceName,
+            </if>
+            <if test="productKey != null" >
+                productKey,
+            </if>
+            <if test="message != null" >
+                message,
+            </if>
+            <if test="checked != null" >
+                checked,
+            </if>
+            <if test="createtime != null" >
+                createtime,
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="deviceName != null" >
+                #{deviceName},
+            </if>
+            <if test="productKey != null" >
+                #{productKey},
+            </if>
+            <if test="message != null" >
+                #{message},
+            </if>
+            <if test="checked != null" >
+                #{checked},
+            </if>
+            <if test="createtime != null" >
+                #{createtime},
+            </if>
+        </trim>
+    </insert>
+
+
+    <insert id="MsgToHty" parameterType="DeviceMsg">
+        insert into spring_server.msg_history
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            <if test="deviceName != null" >
+                deviceName,
+            </if>
+            <if test="productKey != null" >
+                productKey,
+            </if>
+            <if test="message != null" >
+                message,
+            </if>
+            <if test="checked != null" >
+                checked,
+            </if>
+            <if test="createtime != null" >
+                createtime,
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides="," >
+            <if test="deviceName != null" >
+                #{deviceName},
+            </if>
+            <if test="productKey != null" >
+                #{productKey},
+            </if>
+            <if test="message != null" >
+                #{message},
+            </if>
+            <if test="checked != null" >
+                #{checked},
+            </if>
+            <if test="createtime != null" >
+                #{createtime},
+            </if>
+        </trim>
+    </insert>
+
+    <delete id="delMessage" parameterType="int">
+        delete
+        from message
+        where id=#{id}
+    </delete>
+
+    <delete id="delMsgHty" parameterType="int">
+        delete
+        from msg_history
+        where id=#{id}
+    </delete>
+
+</mapper>

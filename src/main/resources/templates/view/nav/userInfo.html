@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- layui样式 -->
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
+    <title>Document</title>
+    <style>
+        .layui-tab-title {
+            color: #333 !important;
+        }
+
+        .layui-tab-brief > .layui-tab-title .layui-this {
+            color: #333 !important;
+        }
+
+        .layui-tab-brief > .layui-tab-more li.layui-this:after,
+        .layui-tab-brief > .layui-tab-title .layui-this:after {
+            border: none;
+            border-radius: 0;
+            border-bottom: 1px solid #000;
+        }
+
+        .avatar-add {
+            position: relative;
+            width: 100%;
+            height: 384px;
+        }
+
+        .avatar-add p {
+            position: absolute;
+            top: 70px;
+            width: 100%;
+            margin-top: 10px;
+            font-size: 12px;
+            text-align: center;
+            color: #999;
+        }
+
+        .avatar-add .upload-img {
+            position: absolute;
+            left: 50%;
+            top: 35px;
+            margin: 0 0 0 -56px;
+        }
+
+        .avatar-add img {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 168px;
+            height: 168px;
+            margin: -50px 0 0 -84px;
+            border-radius: 100%;
+        }
+
+        .foot {
+            height: 49px !important;
+            line-height: 49px;
+            text-align: right;
+            background-color: #f5f5f5;
+            border-top: 1px #e5e5e5 solid;
+        }
+
+        .foot button {
+            width: 62px;
+            height: 28px;
+            line-height: 28px;
+            margin-left: 2px;
+            margin-right: 15px;
+        }
+
+        .foot .close:hover {
+            border-color: #1E9FFF;
+        }
+    </style>
+</head>
+
+<body style="background-color: #ffffff">
+<form class="layui-form" action="">
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+                        <ul class="layui-tab-title">
+                            <li class="layui-this"><i class="czs-face-l"></i>设置我的资料</li>
+<!--                            <li>设置头像</li>-->
+                        </ul>
+                        <div class="layui-tab-content">
+                            <div class="layui-tab-item layui-show">
+                                <div class="layui-card-body" style="padding: 0;padding-top: 4px;padding-left: 4px;">
+                                    <div class="layui-form" lay-filter="">
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">用户名</label>
+                                            <div class="layui-input-inline">
+                                                <input type="text" name="nickname" th:value="${user.nickname}"
+                                                       lay-verify="nickname"
+                                                       id="nickname" autocomplete="off" placeholder="请输入昵称"
+                                                       class="layui-input">
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">手机</label>
+                                            <div class="layui-input-inline">
+                                                <input type="text" name="phone" th:value="${user.phone}"
+                                                       id="phone" placeholder="请输入手机号" class="layui-input">
+                                            </div>
+                                        </div>
+                                        <div class="layui-form-item">
+                                            <label class="layui-form-label">验证码</label>
+                                            <div class="layui-input-inline">
+                                                <input type="text" name="code" id="code" placeholder="输入验证码"
+                                                       class="layui-input">
+                                            </div>
+                                            <input id="sendCodeBtn" type="button"
+                                                   class="submit layui-btn layui-btn-primary" value="发送验证码"/>
+                                        </div>
+                                        <hr>
+                                        <div class="layui-form-item layui-form-text">
+                                            <label class="layui-form-label">备注</label>
+                                            <div class="layui-input-block" style="height: 123px">
+                                                <textarea id="note" name="note" placeholder="请输入备注"
+                                                          class="layui-textarea" th:text="${user.note}"></textarea>
+                                            </div>
+                                            <input type="hidden" name="uid" th:value="${user.uid}" id="uid">
+                                            <br><br><br>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="layui-tab-item">
+                                <div class="avatar-add">
+                                    <p>建议尺寸168*168，支持jpg、png、gif，最大不能超过50KB</p>
+                                    <button type="button" class="layui-btn layui-btn-normal upload-img" id="test1">
+                                        <i class="layui-icon">&#xe67c;</i>上传图片
+                                    </button>
+                                    <img src="/images/nav_userInfo/default-avatar.svg">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="foot">
+        <button type="button" class="layui-btn layui-btn-normal layui-btn-sm" lay-submit="" lay-filter="setmyinfo">
+            确定
+        </button>
+        <button type="button" class="layui-btn layui-btn-primary layui-btn-sm close" lay-submit=""
+                lay-filter="close">取消
+        </button>
+    </div>
+</form>
+
+
+<!-- layui JS -->
+<script src="/static/layui/layui.js"></script>
+<script src="/static/js/jquery.js"></script>
+<script>
+    function close() {
+        //先得到当前iframe层的索引
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);
+    }
+
+    function sendCode() {
+        var phone = $('#phone').val();
+        $('#sendCodeBtn').val("请稍后...");
+        $.ajax({
+            type: 'post',
+            url: window.location.protocol + '//' + window.location.host + '/sendSms',
+            dataType: 'html',
+            data: {phone: phone},
+            contentType: 'application/x-www-form-urlencoded',
+            success: function (data) {
+                $('#sendCodeBtn').val("已发送...");
+                console.log(data);
+                if (data === 'exist') {
+                    layer.msg('手机号已绑定!', {icon: 5, time: 2000});
+                    $('#sendCodeBtn').val("发送验证码");
+                } else if (data === 'wrongNum') {
+                    layer.msg('请输入正确手机号!', {icon: 5, time: 2000});
+                    $('#sendCodeBtn').val("发送验证码");
+                } else if (data === 'success') {
+                    layer.msg('验证码已发送!', {icon: 1, time: 2000});
+
+                }
+            },
+            error: function () {
+                $('#sendCodeBtn').val("发送验证码");
+            }
+        });
+    }
+
+    layui.use(['form', 'jquery', 'layer', 'element', 'upload'], function () {
+        var form = layui.form;
+        var layer = layui.layer;
+        var element = layui.element;
+        var upload = layui.upload;
+        $(function () {
+            $('#sendCodeBtn').click(function () {
+                sendCode();
+            });
+        });
+        //执行实例
+        var uploadInst = upload.render({
+            elem: '#test1' //绑定元素
+            , url: '/upload/' //上传接口
+            , done: function (res) {
+                //上传完毕回调
+            }
+            , error: function () {
+                //请求异常回调
+            }
+        });
+        //监听提交
+        form.on('submit(setmyinfo)', function (data) {
+            console.log(data.field)
+            var user ={};
+            user = data.field;
+                console.log(user)
+            $.ajax({
+                type: "POST",
+                dataType: 'html',
+                contentType: 'application/x-www-form-urlencoded',
+                data: {
+                    code:data.field.code,
+                    uid:data.field.uid,
+                    phone:data.field.phone,
+                    nickname:data.field.nickname,
+                    note:data.field.note,
+                },
+                url: window.location.protocol + '//' + window.location.host + '/addInfo',
+                success: function (e) {
+                    console.log(e)
+                    if (e === "success") {
+                        layer.msg('操作成功!', {icon: 6, time: 2000});
+                        setTimeout(function () {
+                            close();
+                        }, 2500);
+                    } else if (e === "noUpdatePhone") {
+                        layer.msg('操作成功~未更新手机号！', {icon: 6, time: 2000});
+                        setTimeout(function () {
+                            close();
+                        }, 2500);
+                    } else {
+                        layer.msg('请重试!', {icon: 5, time: 2000});
+                        return false;
+                    }
+                },
+                failed: function (e) {
+                    console.log(e)
+                }
+            })
+        })
+        return false;
+    });
+
+    $('.close').click(function () {
+        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+        parent.layer.close(index); //执行关闭
+        return false;
+    })
+
+</script>
+</body>
+
+</html>

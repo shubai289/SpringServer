@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.springframework.integration:spring-integration-mqtt:5.5.17">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../.m2/repository/org/springframework/integration/spring-integration-mqtt/5.5.17/spring-integration-mqtt-5.5.17.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/../../.m2/repository/org/springframework/integration/spring-integration-mqtt/5.5.17/spring-integration-mqtt-5.5.17-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../../.m2/repository/org/springframework/integration/spring-integration-mqtt/5.5.17/spring-integration-mqtt-5.5.17-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

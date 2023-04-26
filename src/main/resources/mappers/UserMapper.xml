@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wclp.springserver.mapper.UserMapper">
+
+    <resultMap id="UserMap" type="com.wclp.springserver.pojo.User">
+        <id property="id" column="id"/>
+        <result property="id" column="id"/>
+        <result property="phone" column="phone"/>
+        <result property="password" column="password"/>
+        <result property="nickname" column="nickname"/>
+        <result property="loginDate" column="loginDate"/>
+        <result property="method_L" column="method_L"/>
+        <result property="result_L" column="result_L"/>
+        <result property="note" column="note"/>
+    </resultMap>
+
+    <select id="selByPhone" resultType="User">
+        select *
+        from user
+        where phone = #{phone}
+    </select>
+
+    <select id="selBynickName" resultType="User">
+        select *
+        from user
+        where nickname = #{nickname}
+    </select>
+
+    <select id="selById" resultMap="UserMap" parameterType="String">
+        select *
+        from user
+        where Uid = #{uid}
+    </select>
+
+    <select id="getLoginLogPage" resultMap="UserMap" parameterType="int">
+        select user.Uid, user.nickname, user.phone, loginLog.loginDate, loginLog.method_L, loginLog.result_L
+        from user, loginLog
+        where loginLog.Uid = user.Uid
+        ORDER BY loginLog.loginDate DESC
+        LIMIT #{start}, #{rows}
+    </select>
+
+    <insert id="InsertUsers" parameterType="User">
+        insert into spring_server.user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="Uid != null">
+                Uid,
+            </if>
+            <if test="phone != null">
+                phone,
+            </if>
+            <if test="password != null">
+                password,
+            </if>
+            <if test="nickname != null">
+                nickname,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="Uid != null">
+                #{Uid},
+            </if>
+            <if test="phone != null">
+                #{phone},
+            </if>
+            <if test="password != null">
+                #{password},
+            </if>
+            <if test="nickname != null">
+                #{nickname},
+            </if>
+        </trim>
+    </insert>
+
+    <insert id="recordLogin_Log" parameterType="User">
+        insert into spring_server.loginLog
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="Uid != null">
+                Uid,
+            </if>
+            <if test="loginDate != null">
+                loginDate,
+            </if>
+            <if test="method_L != null">
+                method_L,
+            </if>
+            <if test="result_L != null">
+                result_L,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="Uid != null">
+                #{Uid},
+            </if>
+            <if test="loginDate != null">
+                #{loginDate},
+            </if>
+            <if test="method_L != null">
+                #{method_L},
+            </if>
+            <if test="result_L != null">
+                #{result_L},
+            </if>
+        </trim>
+    </insert>
+
+    <delete id="delById" parameterType="String">
+        delete
+        from user
+        where Uid = #{uid}
+    </delete>
+
+    <select id="searchUser" resultMap="UserMap">
+        select u.id, u.Uid, note, nickname, phone, lL.loginDate, l.method_L
+        from user u
+                 RIGHT JOIN (select Uid, max(loginDate) as "loginDate" from loginLog GROUP BY Uid) as lL
+                            on u.Uid = lL.Uid
+                 INNER JOIN (select method_L, loginDate from loginLog) l on l.loginDate = lL.loginDate
+        where 1=1
+        <if test="nickname != null and nickname !=''">
+            and nickname like concat('%',#{nickname},'%')
+        </if>
+        <if test="phone != null and nickname !=''">
+            and phone like concat('%',#{phone},'%')
+        </if>
+           limit #{start}, #{rows};
+    </select>
+
+
+    <select id="findUserByPage" parameterType="int" resultMap="UserMap">
+        select u.id, u.Uid, note, nickname, phone, lL.loginDate, l.method_L
+        from user u
+                 RIGHT JOIN (select Uid, max(loginDate) as "loginDate" from loginLog GROUP BY Uid) as lL
+                            on u.Uid = lL.Uid
+                 INNER JOIN (select method_L, loginDate from loginLog) l on l.loginDate = lL.loginDate
+            limit #{start}
+           , #{rows};
+    </select>
+
+    <select id="findTotalCount" resultType="int">
+        select count(*)
+        from user
+    </select>
+
+    <select id="TotalLogCount" resultType="int">
+        select count(*)
+        from loginLog
+    </select>
+
+    <update id="updUserInfo" parameterType="User">
+        update user
+        <set>
+            <if test="nickname != null">nickname=#{nickname},</if>
+            <if test="password != null">password=#{password},</if>
+            <if test="phone != null">phone=#{phone},</if>
+            <if test="note != null">note=#{note},</if>
+        </set>
+        where user.Uid=#{uid}
+    </update>
+
+    <update id="changePwd" parameterType="User">
+        update user
+        <set>
+            <if test="password != null">password=#{password},</if>
+        </set>
+        where user.Uid=#{uid}
+    </update>
+
+
+</mapper>

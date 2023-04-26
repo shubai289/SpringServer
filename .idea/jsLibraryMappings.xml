@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JavaScriptLibraryMappings">
+    <file url="file://$PROJECT_DIR$" libraries="{animate, bootstrap, echarts, echarts-gl, echarts-stat, font-awesome, font_1179208_6sxekl4z8m7, jquery, jquery-ui, layui, remixicon}" />
+  </component>
+</project>

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>注册</title>
+
+    <link rel="stylesheet" href="/static/css/layui.css">
+    <style>
+        .header {
+            background: #35b2ff;
+            border-radius: 10px 10px 0px 0px;
+
+        }
+
+        form {
+            margin: 10px 15px 15px;
+        }
+
+        .header h1 {
+            color: #FFFFFF;
+        }
+
+        .huoqu {
+            background: #fff;
+            color: #0C0C0C;
+            border: 1px solid #E6E6E6;
+        }
+
+        .huoqu:hover {
+            color: #0C0C0C;
+        }
+
+        .zhuce {
+            width: 100%;
+            background: #35b2ff;
+            color: #fff;
+            font-size: 18px;
+            border-radius: 5px;
+        }
+
+        .zhuce:hover {
+            opacity: 1;
+        }
+
+        .layui-form-checked[lay-skin=primary] i {
+            border-color: #35b2ff !important;
+        }
+
+        .layui-form-checked i, .layui-form-checked:hover i {
+            background-color: #35b2ff !important;
+        }
+
+    </style>
+    <script src="/static/jquery-1.11.3.js"></script>
+</head>
+<body>
+<div class="layui-row">
+    <form action="" class="layui-form layui-form-pane layui-col-xs11">
+        <!-- 第一行-->
+        <div class="layui-form-item layui-row header">
+            <h1 class="layui-col-xs6 layui-col-xs-offset3">创建用户</h1>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"><i
+                    class="layui-icon layui-icon-username"></i></label>
+            <div class="layui-input-block">
+                <input type="text" name="nickname" lay-verify="username" class="layui-input"
+                       placeholder="请输入用户名" id="nickname"/>
+            </div>
+        </div>
+        <!-- 第二行-->
+        <div class="layui-form-item">
+            <label class="layui-form-label">
+                <i class="layui-icon layui-icon-cellphone"></i></label>
+            <div class="layui-input-block">
+                <input type="tel" id="phone" name="phone" lay-verify="phone" class="layui-input"
+                       placeholder="请输入手机号"/>
+            </div>
+        </div>
+        <!-- 第三行-->
+        <div class="layui-form-item">
+            <div class="layui-row">
+                <div class="layui-col-xs8">
+                    <label class="layui-form-label"><i
+                            class="layui-icon layui-icon-vercode"></i></label>
+                    <div class="layui-input-block">
+                        <input type="text" id="vercode" name="vercode" lay-verify="vercode" class="layui-input"
+                               placeholder="请输入验证码"/>
+                    </div>
+                </div>
+                <div class="layui-col-xs2 layui-col-xs-offset1">
+                    <!--          <button class="layui-btn huoqu" id="sendMsgBtn" >发送验证码</button>-->
+                    <input class="layui-btn huoqu" type="button" id="sendMsgBtn" value="发送验证码"/>
+                </div>
+
+            </div>
+        </div>
+        <!--                第四行-->
+        <div class="layui-form-item">
+            <label class="layui-form-label"><i
+                    class="layui-icon layui-icon-password"></i></label>
+            <div class="layui-input-block">
+                <input type="password" id="pwd1" name="password" lay-verify="password" class="layui-input"
+                       placeholder="请输入密码"/>
+            </div>
+        </div>
+        <!--                第五行-->
+        <div class="layui-form-item">
+            <label class="layui-form-label"><i
+                    class="layui-icon layui-icon-password"></i></label>
+            <div class="layui-input-block">
+                <input type="password" id="pwd2" name="password" lay-verify="password_twice" class="layui-input"
+                       placeholder="请再次输入密码"/>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <input type="checkbox" id="key_service" lay-verify="check" name=""
+                   title="我已阅读并同意 <a href='#'>《用户协议》</a><a>《隐私政策》</a>"
+                   lay-skin="primary">
+        </div>
+        <div class="layui-form-item layui-row ">
+            <button class="layui-btn zhuce" id="register" lay-submit>注册</button>
+        </div>
+
+    </form>
+</div>
+
+<script src="/static/layui.js"></script>
+<script>
+    function reLaunch(uid) {
+        var registerLoadIndex = layer.load(2);
+
+        layer.close(registerLoadIndex);
+        var index = parent.layer.getFrameIndex(window.name); //获取当前窗口的name
+        parent.layer.close(index);//关闭窗口
+        window.location.href = '/toManagementPage?uid='+uid;
+    }
+    function register() {
+    //注册回调
+        var nickname = $('#nickname').val();
+        var phone = $('#phone').val();
+        var vercode = $('#vercode').val();
+        var pwd1 = $('#pwd1').val();
+        var pwd2 = $('#pwd2').val();
+        var password;
+        if(pwd1 === null || pwd1 ==="" || pwd2 === null || pwd2 ===""){
+            layer.msg('请输入密码！', {icon: 2});
+            return false;
+        }else if(pwd1 !== pwd2){
+            layer.msg('两次密码不一致！', {icon: 2});
+            return false;
+        }else {
+            if(pwd1 === pwd2){
+                password = pwd1;
+            }else {
+                return false;
+            }
+            $.ajax({
+                type: 'post',
+                url: window.location.protocol + '//' + window.location.host + '/register.do',
+                dataType: 'html',
+                data: {
+                    nickname : nickname,
+                    password : password,
+                    phone : phone,
+                    vercode : vercode,
+                    method_L:"Web"
+                },
+                contentType: 'application/x-www-form-urlencoded',
+                success: function (data) {
+                    console.log(data)
+                    if(data === "errCode"){
+                        layer.msg('验证码错误!', {icon: 5, time: 2000});
+                    }else if(data === "noCode"){
+                        layer.msg('请重试!', {icon: 5, time: 2000});
+                    }else if(data === "timeOut"){
+                        console.log(data);
+                        layer.msg('超时！请重新发送!', {icon: 5, time: 2000});
+                    }else if(data === "exist"){
+                        layer.msg('请重试!', {icon: 5, time: 2000});
+                    }else {
+                        console.log(data);
+                        layer.msg('操作成功!', {icon: 6, time: 2000});
+                        setInterval(function (){reLaunch(data)},2500)
+                    }
+                },
+            });
+        }
+    }
+
+    $('#sendMsgBtn').on('click', function () {
+        var phone = $('#phone').val();
+        if (phone === '') {
+            layer.msg('手机号不能为空！', {icon: 2});
+            return false;
+        }
+        if (phone !== 0 && phone.length === 11) {
+            layer.msg('手机验证码已发送！', {icon: 0});
+        }
+        $('#sendMsgBtn').val("请稍后...");
+        $.ajax({
+            type: 'post',
+            url: window.location.protocol + '//' + window.location.host + '/sendSms',
+            dataType: 'html',
+            data: {phone: phone},
+            contentType: 'application/x-www-form-urlencoded',
+            success: function (data) {
+                if(data === "ok") {
+                    $('#sendMsgBtn').val("已发送...");
+                }
+                if(data === "wrongNum"){
+                    $('#sendMsgBtn').val("发送验证码");
+                    layer.msg('手机号码错误!', {icon: 5, time: 2000});
+                }
+            },
+        })
+    });
+    // 注册事件
+    $('#register').click(function () {
+        register();
+        return false;
+    });
+    layui.use(['form', 'layer'], function () {
+        var form = layui.form;
+        var layer = layui.layer;
+        form.render();
+        form.verify({
+            username: function (value) {
+                if (value.length === 0) {
+                    return '用户名不能为空';
+                }
+                if (!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(value)) {
+                    return '用户名不能有特殊字符';
+                }
+                if (/(^\_)|(\__)|(\_+$)/.test(value)) {
+                    return '用户名首尾不能出现下划线\'_\'';
+                }
+                if (/^\d+\d+\d$/.test(value)) {
+                    return '用户名不能全为数字';
+                }
+
+                //如果不想自动弹出默认提示框，可以直接返回 true，这时你可以通过其他任意方式提示（v2.5.7 新增）
+                if (value === 'xxx') {
+                    alert('用户名不能为敏感词');
+                    return true;
+                }
+            }
+            , password: [
+                /^[\S]{3,12}$/
+                , '密码必须3到12位，且不能出现空格'
+            ]
+            , password_twice: function (value) {
+                var newpwd = $("#pwd1").val()
+                if (value.length === 0) {
+                    return '密码必须3到12位，且不能出现空格'
+                }
+                if (newpwd !== value) {
+                    return '密码必须保持一致哟'
+                }
+            }
+            , phone: [
+                /^[1][0-9]{10}$/
+                , '手机号格式不正确'
+            ]
+            , vercode: [
+                /[\S]+/,
+                '请输入验证码'
+            ]
+            , check: function () {
+                var checked = $("#key_service").get(0)
+                if (checked.checked === false) {
+                    // layer.msg("请勾选协议",{icon:5,time:2000,anim: 6})
+                    return '请勾选协议'
+                }
+
+            }
+
+        });
+    })
+</script>
+</body>
+</html>
